@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesan Produk Mobile Legends</title>
+ <style>
+     
+      html {
+    scroll-behavior: smooth;
+}
+
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      
+    }
+
+
+    
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #1e1e1e;
+        padding: 10px;
+        color: #ffffff;
+        border-bottom: 1px solid #444;
+    }
+
+    .header h1 {
+        font-size: 16px;
+        margin: 0;
+        text-align: center;
+        flex-grow: 1;
+        font-family: 'Press Start 2P', cursive;
+    }
+
+  .back-button {
+    background: none; /* No background */
+    border: none; /* No border */
+    color: #ffffff; /* Text color */
+    font-size: 18px; /* Font size */
+    cursor: pointer; /* Pointer on hover */
+    padding: 10px; /* Padding */
+    transition: color 0.3s ease, transform 0.3s ease; /* Transition effects */
+    position: relative; /* For positioning */
+    left: -15px; /* Move the button to the left */
+    text-decoration: none; /* Remove underline */
+    display: inline-flex; /* Use flexbox for better alignment */
+    align-items: center; /* Center items vertically */
+}
+
+.back-button i {
+    margin-right: 5px; /* Space between icon and text */
+}
+
+/* Hover effects */
+.back-button:hover {
+    color: #00e676; /* Change text color on hover */
+    transform: translateY(-3px); /* Slight lift effect */
+}
+
+/* Focus effect for accessibility */
+.back-button:focus {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.5); /* Custom focus outline */
+}
+
+
+    
+  h3 {
+  margin-bottom: 20px; /* Jarak bawah yang lebih kecil */
+  font-size: 23px; /* Ukuran font lebih besar */
+  color: #ffffff; /* Warna teks putih */
+  font-weight: 700; /* Font tebal untuk penekanan */
+  text-transform: uppercase; /* Mengubah teks menjadi huruf kapital */
+  letter-spacing: 1px; /* Jarak antar huruf untuk keterbacaan */
+  position: relative; /* Memungkinkan untuk menambahkan efek */
+  text-align: left; /* Rata kiri untuk label */
+}
+
+
+
+
+  .form-card {
+  margin: 20px auto; /* Centers the card horizontally and adds vertical spacing */
+  padding: 20px;
+  width: 95%; /* Set width relative to the screen, so it scales */
+  max-width: 380px; /* Limits the maximum width */
+  background: linear-gradient(145deg, #1e1e1e, #232323); /* Gradasi untuk tampilan dinamis */
+  border-radius: 16px; /* Sudut lebih bulat untuk kesan modern */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), /* Shadow utama */
+              0 2px 6px rgba(0, 0, 0, 0.2); /* Shadow tambahan untuk kedalaman */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transisi halus */
+}
+
+.form-card:hover {
+  transform: translateY(-5px); /* Sedikit mengangkat saat hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), /* Shadow lebih intens saat hover */
+              0 4px 12px rgba(0, 0, 0, 0.3); /* Tambahan shadow */
+}
+
+
+
+  .products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px; /* Lebih besar untuk memberikan ruang antar produk */
+  margin-bottom: 20px;
+}
+
+.product {
+  background: linear-gradient(145deg, #2b2b2b, #1e1e1e); /* Gradasi dua warna gelap */
+  padding: 15px;
+  border-radius: 12px; /* Sudut bulat */
+  cursor: pointer;
+  position: relative;
+  border: 1px solid #2d323cda;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transisi yang lebih halus */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Shadow lebih halus */
+}
+
+.product:hover {
+  transform: translateY(-5px); /* Efek hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), /* Shadow lebih intens */
+              0 0 15px rgba(0, 230, 118, 0.4); /* Efek glowing hijau lembut */
+}
+
+.product.selected {
+  border-color: #00e676; /* Warna hijau saat dipilih */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), /* Shadow intens */
+              0 0 20px rgba(0, 230, 118, 0.6); /* Efek glowing lebih kuat */
+}
+
+
+.product h3 {
+  margin-bottom: 10px;
+  font-size: 13.8px;
+  color: #ffffff; /* Warna teks putih untuk kontras */
+  font-weight: 600; /* Font tebal untuk penekanan */
+  text-transform: uppercase; /* Mengubah teks menjadi kapital untuk kesan lebih tegas */
+  letter-spacing: 1px; /* Menambah spasi antar huruf untuk kesan elegan */
+  position: relative;
+  transition: color 0.3s ease, transform 0.3s ease; /* Animasi saat hover */
+  z-index: 1;
+}
+
+
+.product h3::after {
+  content: ''; /* Menambahkan elemen setelah teks */
+  display: block;
+  width: 50px; /* Lebar garis awal */
+  height: 3px; /* Tinggi garis */
+  background-color: #00e676; /* Warna garis */
+  margin: 10px 0; /* Margin atas dan bawah */
+  transition: width 0.3s ease; /* Animasi untuk transisi lebar */
+}
+
+/* Memperpanjang garis saat produk dipilih */
+.product.selected h3::after {
+  width: 100px; /* Memperpanjang garis saat produk dipilih */
+}
+
+
+/* Mengatur kontainer harga asli dan persentase diskon menggunakan flexbox */
+.product .harga-wrapper {
+  display: flex;
+  align-items: center; /* Vertikal align agar teks rata tengah */
+  margin-bottom: 10px; /* Beri sedikit jarak dari harga diskon */
+}
+
+.product .harga-asli {
+  text-decoration: line-through;
+  color: #888888; /* Warna yang lebih gelap untuk elegansi */
+  font-size: 13px;
+  margin-right: 10px; /* Jarak antara harga asli dan persen diskon */
+}
+
+/* Persentase diskon default tanpa glow */
+.product .persen-diskon {
+  color: #00e676;
+  font-size: 0.7em;
+  font-weight: bold;
+  padding: 6px 2px;
+  border-radius: 5px;
+  background-color: rgba(0, 230, 118, 0.1); /* Background hijau muda transparan */
+  border: 1px solid #00e676; /* Border hijau */
+  /* Efek glow dihapus dari default */
+}
+
+/* Efek glowing aktif hanya saat produk dipilih */
+.product.selected .persen-diskon {
+  animation: glow-green 1.5s infinite alternate; /* Animasi glow hijau */
+}
+
+/* Efek glowing untuk persen diskon berwarna hijau */
+@keyframes glow-green {
+  0% {
+    box-shadow: 0 0 5px #00e676; /* Cahaya hijau awal */
+  }
+  100% {
+    box-shadow: 0 0 20px #00e676; /* Cahaya hijau lebih intens */
+  }
+}
+
+
+/* Harga diskon dengan tampilan lebih elegan */
+.product .harga-diskon {
+  color: #ffffff;
+  background-color: #42a5f5;
+  padding: 5px 15px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  animation: flash-animation 1.5s infinite;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  margin-top: 5px;
+}
+
+@keyframes flash-animation {
+  0% {
+    background-color: #42a5f5;
+  }
+  50% {
+    background-color: #64b5f6;
+  }
+  100% {
+    background-color: #42a5f5;
+  }
+}
+
+
+
+    .metode-pembayaran {
+      margin-bottom: 20px;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: #2c2c2c;
+      color: #ffffff;
+      font-size: 16px;
+    }
+
+    /* Button */
+    .button-container {
+  display: grid;            /* Enable grid */
+  place-items: center;     
+  margin-bottom: 65px;
+}
+
+button {
+  width: 100%;
+  max-width: 280px;
+  padding: 12px;
+  background-color: #6200ea;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #3700b3;
+}
+
+   /* Spinner Style */
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid #6200ea;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    display: none;
+    margin: 0 auto;
+}
+
+/* Modal styling */
+.modal {
+    position: fixed;
+    left: 0;
+    bottom: -100%;
+    width: 100%;
+    background-color: #1e1e1e; /* Background gelap */
+    color: #ffffff;
+    border-radius: 16px 16px 0 0; /* Sudut melengkung di atas */
+    padding: 20px;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.7); /* Shadow lebih dalam */
+    transition: all 0.4s ease-in-out;
+}
+
+.modal.show {
+    bottom: 0; /* Menampilkan modal */
+}
+
+.modal-header {
+    display: flex;
+    flex-direction: column; /* Stack the drag handle and title */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-drag-handle {
+    width: 60px; /* Lebar pegangan */
+    height: 6px; /* Tinggi pegangan */
+    background-color: #bbbbbb; /* Warna abu-abu terang */
+    border-radius: 3px; /* Sudut melengkung */
+    margin-bottom: 10px; /* Ruang antara pegangan dan judul */
+}
+
+.modal-title {
+    font-size: 24px; /* Ukuran font lebih besar untuk judul */
+    font-weight: bold; /* Berat font tebal */
+    margin-bottom: 10px; /* Ruang di bawah judul */
+}
+
+.modal-content {
+    margin-bottom: 30px;
+    font-family: 'Arial', sans-serif; /* Gunakan font yang lebih modern */
+    font-size: 16px; /* Ukuran font lebih besar */
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5); /* Bayangan teks yang halus */
+    background: linear-gradient(135deg, rgba(0, 100, 0, 0.8), rgba(0, 200, 0, 0.3)); /* Gradient latar belakang */
+    padding: 15px; /* Tambahkan padding */
+    border-radius: 8px;
+    border: 2px solid #00c853; /* Border hijau */
+    display: flex; /* Gunakan flexbox untuk tata letak */
+    flex-direction: column; /* Susun item secara vertikal */
+    align-items: stretch; /* Renggangkan item untuk lebar penuh */
+}
+
+.modal-content p {
+    margin: 5px 0; /* Jarak antar paragraf */
+    width: 100%; /* Lebar penuh */
+    text-align: left; /* Rata kiri */
+    border-bottom: 1px solid #00c853; /* Tambahkan border bawah */
+    padding: 10px 0; /* Tambahkan padding untuk jarak yang lebih baik */
+}
+
+.modal-content p:last-child {
+    border-bottom: none; /* Hapus border untuk item terakhir */
+}
+
+.modal button {
+    background-color: #00c853; /* Warna latar belakang hijau */
+    color: white; /* Warna teks putih */
+    border: none; /* Hapus border */
+    border-radius: 4px; /* Sudut melengkung */
+    padding: 12px 24px; /* Tambahkan padding */
+    font-size: 16px; /* Ukuran font */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Transisi */
+    cursor: pointer; /* Kursor pointer */
+    margin-top: 10px; /* Jarak atas untuk tombol */
+}
+
+.modal button:hover {
+    background-color: #3700b3; /* Ubah warna saat hover */
+    transform: translateY(-2px); /* Efek angkat saat hover */
+}
+
+
+
+ /* Footer */
+  footer {
+    background-color: #222;
+    color: #fff;
+    padding: 50px 20px;
+    font-family: 'Roboto', sans-serif;
+    border-top: 1px solid #444;
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-logo {
+    text-align: left;
+}
+
+.footer-logo h2 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #f39c12;
+    margin-bottom: 15px;
+}
+
+.footer-logo p {
+    max-width: 400px;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: space-around;
+    gap: 50px;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: #f39c12;
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: white;
+    transform: translateY(-3px);
+}
+
+.footer-social {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.footer-social a {
+    color: #f39c12;
+    margin: 0 15px;
+    font-size: 24px;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-social a:hover {
+    color: white;
+    transform: scale(1.1);
+}
+
+.footer-legal {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin-top: 30px;
+    font-size: 13px;
+    color: #999;
+}
+
+.footer-legal p:hover {
+    color: white;
+}
+
+
+    .description-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #20253fe4;
+        padding: 20px;
+        height: 250px;
+        margin-top: 2px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .text-description {
+        max-width: 70%;
+    }
+
+    .text-description h2 {
+        font-size: 24px;
+        margin: 0 0 10px;
+        font-family: 'Press Start 2P', cursive;
+    }
+
+    .text-description p {
+        font-size: 14px;
+        margin: 0 0 20px;
+        line-height: 1.6;
+    }
+
+    .labels {
+        display: flex;
+        gap: 10px;
+        margin-top: 8px;
+        justify-content: center; /* Posisi center secara horizontal */
+    }
+
+    .label-safe,
+    .label-fast {
+        background-color: #00e676;
+        color: white;
+        font-size: 14px;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-family: 'Roboto', sans-serif;
+        display: flex;
+        align-items: center;
+    }
+
+    .label-safe {
+        background-color: #28a745;
+    }
+
+    .label-fast {
+        background-color: #ffcc00;
+    }
+
+    .label-safe i,
+    .label-fast i {
+        margin-right: 8px;
+        font-size: 16px;
+    }
+    .image-container {
+        max-width: 25%;
+        text-align: right;
+    }
+
+    .game-image {
+        width: 100px;
+        border-radius: 10px;
+    }
+
+.result {
+            margin-top: 20px;
+            text-align: center;
+        }
+        /* Spinner Style */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #6200ea;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin: 0 auto;
+            margin-top: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+
+
+
+
+
+
+
+
+
+
+  </style>
+</head>
+<body>
+
+ <!-- Header with Back Button -->
+<header class="header">
+    
+    
+   <a href="https://ahsan-store-github-io.vercel.app/" class="back-button">
+    <i class="fas fa-arrow-left"></i> Kembali
+</a>
+
+
+    <h1>Product PUBG</h1>
+</header>
+
+<div class="description-container">
+    <div class="text-description">
+        <h2>PUBG MOBILE</h2>
+        <p>PUBG (PlayerUnknown's Battlegrounds) adalah game battle royale yang sangat populer di seluruh dunia. Nikmati pengalaman bertahan hidup yang mendebarkan dengan mode permainan yang seru dan realistis!</p>
+        
+    </div>
+    <div class="image-container">
+        <img src="https://static-src.vocagame.com/topupnolimit/unnamed%20(3)-04102-original.png" alt="Mobile Legends" class="game-image">
+    </div>
+</div>
+
+<div class="labels">
+    <span class="label-safe">
+        <i class="fas fa-shield-alt"></i> 100% Aman
+    </span>
+    <span class="label-fast">
+        <i class="fas fa-clock"></i> Proses 1-2 Menit
+    </span>
+</div>
+
+ <!-- Form UID -->
+<form id="checkForm">
+    <div class="form-card">
+        <h3>1. Masukkan ID</h3>
+        <input type="text" id="uid" placeholder="Masukkan ID" required>
+       
+              
+    </div>
+</form>
+
+
+  <!-- Pilihan Produk -->
+  <div class="form-card">
+    <h3>2. Pilih Produk</h3>
+    <div class="products-grid" id="productContainer">
+      <!-- Produk akan diisi dari Firebase -->
+    </div>
+  </div>
+
+  <!-- Metode Pembayaran -->
+<div class="form-card metode-pembayaran">
+    <h3>3. Pilih Metode Pembayaran</h3>
+    <input type="radio" id="qrPayment" name="paymentMethod" value="QR" checked>
+    <label for="qrPayment">Pembayaran via QR</label>
+    <p style="margin-top: 5px; color: #bbbbbb; font-size: 14px;">
+        Metode ini memungkinkan Anda untuk melakukan pembayaran dengan memindai kode QR yang akan muncul setelah konfirmasi. 
+        Pastikan aplikasi pembayaran Anda terhubung dengan internet dan siap digunakan.
+    </p>
+</div>
+
+
+<!-- Nomor Telepon -->
+<div class="form-card">
+    <h3>4. Masukkan Nomor Telepon</h3>
+    <input type="text" id="phoneNumber" placeholder="Masukkan Nomor Telepon" required>
+    
+    <!-- Peringatan mengenai kewajiban dan informasi kontak -->
+    <p style="margin-top: 5px; color: #e53935; font-size: 14px;">
+        * Nomor telepon wajib diisi. Jika Anda mengalami kendala, Kami bisa menghubungi kamu.
+    </p>
+</div>
+
+  
+<div class="button-container">
+  <button id="placeOrderBtn">Pesan</button>
+</div>
+
+<!-- Modal -->
+<div id="orderModal" class="modal">
+  <div class="modal-header">
+    <!-- Drag handle line -->
+    <div class="modal-drag-handle"></div>
+    <h3>Detail Pesanan</h3>
+   
+  <div class="modal-content">
+    <p id="orderDetails"></p>
+  </div>
+  <button id="confirmOrderBtn">Lanjutkan</button>
+</div>
+</div>
+
+
+<footer>
+    <div class="footer-container">
+        <div class="footer-logo">
+            <h2>RizShop</h2>
+            <p>RizShop adalah website top up murah, cepat, terpercaya dengan banyak pilihan produk, melayani transaksi 24 jam, dan dengan metode pembayaran terlengkap.</p>
+        </div>
+        <div class="footer-links">
+            <ul>
+                <li><a href="menu/bantuan.html">Bantuan</a></li>
+                
+                <li><a href="menu/legal.html">Legal</a></li>
+            </ul>
+            <ul>
+                <li><a href="menu/syarat.html">Syarat & Ketentuan</a></li>
+                <li><a href="menu/kebijakan.html">Kebijakan Privasi</a></li>
+               
+            </ul>
+        </div>
+        <div class="footer-social">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.instagram.com/rizki_yekan/profilecard/?igsh=Z2JkbjF5OTE1Z29i"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.youtube.com/@SlotokYoe"><i class="fab fa-youtube"></i></a>
+        </div>
+        <div class="footer-legal">
+            <p>&copy; 2024 RizShop Semua hak cipta dilindungi.</p>
+        </div>
+    </div>
+</footer>
+
+
+
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
+<script>
+ // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyC5Mtu7P9dzSFG6xUQLteyUWDlFskoHqYs",
+  authDomain: "rizshop-9a8b9.firebaseapp.com",
+  projectId: "rizshop-9a8b9",
+  storageBucket: "rizshop-9a8b9.appspot.com",
+  messagingSenderId: "160498193019",
+  appId: "1:160498193019:web:b87ecd94fa342324b788de",
+  measurementId: "G-P1K9EK6SK7"
+};
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+// Menampilkan produk Mobile Legends dari Firebase
+const productContainer = document.getElementById('productContainer');
+let selectedProduct = null;
+
+db.collection('PUBG')
+  .get()
+  .then((querySnapshot) => {
+    const products = [];
+
+    // Mengumpulkan data produk
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      products.push(data);
+    });
+
+    // Mengurutkan produk berdasarkan harga diskon (harus pastikan hargaDiskon adalah angka)
+    products.sort((a, b) => parseInt(a.hargaDiskon.replace(/\D/g, '')) - parseInt(b.hargaDiskon.replace(/\D/g, '')));
+
+   products.forEach((data) => {
+  const hargaAsli = parseInt(data.hargaAsli.replace(/\D/g, ''));
+  const hargaDiskon = parseInt(data.hargaDiskon.replace(/\D/g, ''));
+
+  // Menghitung persentase diskon
+  const persenDiskon = Math.round(((hargaAsli - hargaDiskon) / hargaAsli) * 100);
+
+  const productDiv = document.createElement('div');
+  productDiv.classList.add('product');
+  productDiv.innerHTML = `
+    <h3>${data.namaBarang}</h3>
+    <div class="harga-wrapper">
+      <p class="harga-asli">Rp${hargaAsli.toLocaleString('id-ID')}</p>
+      <label class="persen-diskon">(${persenDiskon}% OFF)</label>
+    </div>
+    <p class="harga-diskon">Rp${hargaDiskon.toLocaleString('id-ID')}</p>
+  `;
+  productDiv.addEventListener('click', () => {
+    // Deselect previous product
+    document.querySelectorAll('.product').forEach(p => p.classList.remove('selected'));
+    productDiv.classList.add('selected');
+    selectedProduct = data;
+  });
+  productContainer.appendChild(productDiv);
+});
+
+  })
+  .catch((error) => {
+    console.error("Error mendapatkan produk: ", error);
+  });
+
+
+
+  // Logika pesanan
+  const placeOrderBtn = document.getElementById('placeOrderBtn');
+  const orderModal = document.getElementById('orderModal');
+  const orderDetails = document.getElementById('orderDetails');
+  const confirmOrderBtn = document.getElementById('confirmOrderBtn');
+
+  let paymentMethod; // Deklarasi variabel di luar untuk akses global
+
+  placeOrderBtn.addEventListener('click', () => {
+    const uid = document.getElementById('uid').value; // Ambil nilai UID
+    const phoneNumber = document.getElementById('phoneNumber').value; // Ambil nilai nomor telepon
+
+    // Ambil metode pembayaran yang dipilih
+    paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+
+    if (!uid || !selectedProduct || !phoneNumber || !paymentMethod) {
+  Swal.fire({
+    icon: 'warning',
+    title: 'Form Tidak Lengkap',
+    text: 'UID, Server ID, produk, nomor telepon, dan metode pembayaran harus diisi dengan benar sebelum melanjutkan.',
+    confirmButtonText: 'OK',
+    background: '#1e1e1e',
+    color: '#ffffff',
+    confirmButtonColor: '#00e676',
+  });
+  return;
+}
+
+
+    // Tampilkan modal dengan detail pesanan
+    orderDetails.innerHTML = `
+      <p><strong>ID:</strong> ${uid}</p>
+      <p><strong>Produk:</strong> ${selectedProduct.namaBarang} - Rp${selectedProduct.hargaDiskon}</p>
+      <p><strong>Metode Pembayaran:</strong> ${paymentMethod}</p>
+      <p><strong>Nomor Telepon:</strong> ${phoneNumber}</p>
+      <p><strong>Nama Game:</strong>PUBG</p>
+      
+    `;
+
+    orderModal.classList.add('show');
+  });
+
+  // Menutup modal dengan seret ke bawah
+  let startY = 0;
+  orderModal.addEventListener('touchstart', (e) => {
+    startY = e.touches[0].clientY;
+  });
+
+  orderModal.addEventListener('touchmove', (e) => {
+    const currentY = e.touches[0].clientY;
+    const distanceY = currentY - startY;
+
+    if (distanceY > 50) {
+      orderModal.classList.remove('show');
+    }
+  });
+
+  // Konfirmasi pesanan
+  confirmOrderBtn.addEventListener('click', () => {
+    const uid = document.getElementById('uid').value; // Ambil nilai dari input UID
+    const combinedId = uid; // Menggunakan UID sebagai combinedId
+
+    const orderData = {
+      combinedId, // Menggunakan field baru yang berisi UID
+      productName: selectedProduct.namaBarang,
+      productPrice: selectedProduct.hargaDiskon,
+      paymentMethod, // Menggunakan variabel yang dideklarasikan sebelumnya
+      phoneNumber: document.getElementById('phoneNumber').value, // Ambil nilai dari input nomor telepon
+      gameName: "PUBG", // Send game name to Firebase
+      timestamp: new Date()
+    };
+
+    // Tampilkan animasi pemesanan
+    showLoadingAnimation();
+
+    db.collection('Orders').add(orderData)
+      .then((docRef) => {
+        const orderId = docRef.id; // Get the newly created order ID
+        hideLoadingAnimation(); // Hide loading animation
+        alert('Pesanan berhasil dibuat!');
+        window.location.href = `orderan.html?orderId=${orderId}`; // Redirect with order ID
+      })
+      .catch((error) => {
+        hideLoadingAnimation(); // Sembunyikan animasi jika terjadi error
+        console.error("Error membuat pesanan: ", error);
+        alert('Terjadi kesalahan saat membuat pesanan.');
+      });
+  });
+
+  // Fungsi untuk menampilkan animasi loading
+  function showLoadingAnimation() {
+    const loadingAnimation = document.createElement('div');
+    loadingAnimation.id = 'loadingAnimation';
+    loadingAnimation.innerHTML = '<p>Proses pemesanan, harap tunggu...</p>'; // Ganti dengan animasi yang diinginkan
+    loadingAnimation.style.position = 'fixed';
+    loadingAnimation.style.top = '50%';
+    loadingAnimation.style.left = '50%';
+    loadingAnimation.style.transform = 'translate(-50%, -50%)';
+    loadingAnimation.style.zIndex = '1000';
+    loadingAnimation.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+    loadingAnimation.style.padding = '20px';
+    loadingAnimation.style.borderRadius = '8px';
+    loadingAnimation.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+    document.body.appendChild(loadingAnimation);
+  }
+
+  // Fungsi untuk menyembunyikan animasi loading
+  function hideLoadingAnimation() {
+    const loadingAnimation = document.getElementById('loadingAnimation');
+    if (loadingAnimation) {
+      loadingAnimation.remove();
+    }
+  }
+
+ 
+</script>
+
+</body>
+</html>

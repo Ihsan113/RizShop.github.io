@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tombol Mengambang dengan Shortcut - AhsanStore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #1d1d1d;
+            color: white;
+        }
+
+        /* Style untuk tombol mengambang */
+        .floating-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+            z-index: 1000;
+        }
+
+        .floating-button:hover {
+            background-color: #e67e22;
+        }
+
+        /* Style untuk menu shortcut */
+        .floating-menu {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 999;
+        }
+
+        .floating-menu a {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .floating-menu a:hover {
+            background-color: #444;
+        }
+
+        .floating-menu a i {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Tombol Mengambang -->
+    <button class="floating-button" id="floatingButton">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Menu Shortcut -->
+    <div class="floating-menu" id="floatingMenu">
+        <a href="/history">
+            <i class="fas fa-history"></i> History
+        </a>
+        <a href="https://wa.me/6281234567890" target="_blank">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+       
+    </div>
+
+    <script>
+        const floatingButton = document.getElementById('floatingButton');
+        const floatingMenu = document.getElementById('floatingMenu');
+
+        floatingButton.addEventListener('click', function() {
+            if (floatingMenu.style.display === 'none' || floatingMenu.style.display === '') {
+                floatingMenu.style.display = 'flex';
+            } else {
+                floatingMenu.style.display = 'none';
+            }
+        });
+
+        // Optional: Menyembunyikan menu jika diklik di luar tombol/menu
+        window.addEventListener('click', function(e) {
+            if (!floatingButton.contains(e.target) && !floatingMenu.contains(e.target)) {
+                floatingMenu.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+</html>

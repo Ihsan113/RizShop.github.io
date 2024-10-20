@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Informasi Pesanan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            padding: 20px;
+            flex: 1;
+        }
+
+        h2 {
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        img {
+            width: 50px;
+            height: auto;
+        }
+
+        select, button {
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select:hover, button:hover {
+            border-color: #007bff;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-all {
+            margin-top: 20px;
+            background-color: #dc3545;
+        }
+
+        .delete-all:hover {
+            background-color: #c82333;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                font-size: 14px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            button, select {
+                width: 100%;
+            }
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-storage.js"></script>
+</head>
+<body>
+    <main>
+        <h2>Informasi Pesanan</h2>
+        <div id="orderListContainer">
+            <table id="orderTable">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Tujuan Pengguna</th>
+                        <th>Produk</th>
+                        <th>Nama Game</th>
+                        <th>Bukti Pembayaran</th>
+                        <th>Metode Pembayaran</th>
+                        <th>Nomor Telepon</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="orderTableBody">
+                    <!-- Data pesanan akan dimuat di sini -->
+                </tbody>
+            </table>
+        </div>
+        <button class="delete-all" onclick="deleteAllOrders()">Hapus Semua Pesanan</button>
+    </main>
+   
+    <script>
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyC5Mtu7P9dzSFG6xUQLteyUWDlFskoHqYs",
+  authDomain: "rizshop-9a8b9.firebaseapp.com",
+  projectId: "rizshop-9a8b9",
+  storageBucket: "rizshop-9a8b9.appspot.com",
+  messagingSenderId: "160498193019",
+  appId: "1:160498193019:web:b87ecd94fa342324b788de",
+  measurementId: "G-P1K9EK6SK7"
+};
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Fungsi untuk mengambil data pesanan dari Firestore
+        function fetchOrders() {
+            const orderTableBody = document.getElementById('orderTableBody');
+            db.collection('Orders').get().then((querySnapshot) => {
+                orderTableBody.innerHTML = ''; // Bersihkan baris yang ada
+                querySnapshot.forEach((doc) => {
+                    const orderData = doc.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${doc.id}</td>
+                        <td>${orderData.combinedId}</td>
+                        <td>${orderData.productName} - Rp${orderData.productPrice}</td>
+                        <td>${orderData.gameName}</td>
+                        <td>${orderData.paymentProof ? `<img src="${orderData.paymentProof}" alt="Bukti Pembayaran">` : 'Belum ada bukti pembayaran'}</td>
+                        <td>${orderData.paymentMethod}</td>
+                        <td>${orderData.phoneNumber}</td>
+                        <td>
+                            <select onchange="updateStatus('${doc.id}', this.value)">
+                                <option value="pending" ${orderData.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="confirmed" ${orderData.status === 'confirmed' ? 'selected' : ''}>Dikonfirmasi</option>
+                                <option value="rejected" ${orderData.status === 'rejected' ? 'selected' : ''}>Ditolak</option>
+                                <option value="completed" ${orderData.status === 'completed' ? 'selected' : ''}>Selesai</option>
+                                <option value="trouble" ${orderData.status === 'trouble' ? 'selected' : ''}>Gangguan</option>
+                            </select>
+                        </td>
+                        <td class="action-buttons">
+                            ${!orderData.paymentProof ? `<button onclick="deleteOrder('${doc.id}')">Hapus</button>` : ''}
+                        </td>
+                    `;
+                    orderTableBody.appendChild(row);
+                });
+            }).catch((error) => {
+                console.error("Error fetching orders: ", error);
+                orderTableBody.innerHTML = `<tr><td colspan="9">Terjadi kesalahan saat mengambil data pesanan.</td></tr>`;
+            });
+        }
+
+        // Fungsi untuk menghapus semua pesanan
+        function deleteAllOrders() {
+            const confirmDelete = confirm("Apakah Anda yakin ingin menghapus semua pesanan?");
+            if (confirmDelete) {
+                db.collection('Orders').get().then((querySnapshot) => {
+                    const deletePromises = [];
+                    querySnapshot.forEach((doc) => {
+                        const orderData = doc.data();
+                        if (orderData.paymentProof && orderData.paymentProof.trim() !== '') {
+                            // Jika ada bukti pembayaran, hapus dari Storage
+                            const storageRef = storage.refFromURL(orderData.paymentProof);
+                            deletePromises.push(storageRef.delete().catch((error) => {
+                                console.error("Error deleting payment proof: ", error);
+                            }));
+                        }
+                        // Hapus dari Firestore
+                        deletePromises.push(db.collection('Orders').doc(doc.id).delete());
+                    });
+                    // Tunggu semua penghapusan selesai
+                    return Promise.all(deletePromises);
+                }).then(() => {
+                    alert("Semua pesanan berhasil dihapus.");
+                    location.reload(); // Refresh halaman setelah penghapusan
+                }).catch((error) => {
+                    console.error("Error deleting all orders: ", error);
+                    alert("Terjadi kesalahan saat menghapus semua pesanan: " + error.message);
+                });
+            }
+        }
+
+        // Fungsi untuk menghapus pesanan
+        function deleteOrder(orderId) {
+            const confirmDelete = confirm("Apakah Anda yakin ingin menghapus pesanan ini?");
+            if (confirmDelete) {
+                deleteOrderData(orderId);
+            } else {
+                console.log("Penghapusan pesanan dibatalkan.");
+            }
+        }
+
+        // Fungsi untuk menghapus data pesanan dari Firestore
+        function deleteOrderData(orderId) {
+            db.collection('Orders').doc(orderId).delete().then(() => {
+                alert("Pesanan berhasil dihapus.");
+                location.reload(); // Refresh halaman setelah penghapusan
+            }).catch((error) => {
+                console.error("Error deleting order: ", error);
+                alert("Terjadi kesalahan saat menghapus pesanan: " + error.message);
+            });
+        }
+
+        // Fungsi untuk mengubah status pesanan
+        function updateStatus(orderId, newStatus) {
+            db.collection('Orders').doc(orderId).update({
+                status: newStatus
+            }).then(() => {
+                alert("Status berhasil diubah.");
+            }).catch((error) => {
+                console.error("Error updating status: ", error);
+            });
+        }
+
+        // Menjalankan fungsi untuk mengambil data pesanan saat halaman dimuat
+        fetchOrders();
+    </script>
+</body>
+</html>

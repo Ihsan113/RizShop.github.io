@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konfirmasi Pesanan</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1e1e1e;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .receipt {
+            background-color: #333;
+            border: 2px dashed #ffcc00;
+            padding: 20px;
+            border-radius: 10px;
+            width: 320px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .receipt h1 {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #ffcc00;
+        }
+
+        .receipt hr {
+            border: none;
+            border-top: 1px dashed #ffcc00;
+            margin: 10px 0;
+        }
+
+        .receipt p {
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 5px 0;
+        }
+
+        .receipt p strong {
+            color: #ffcc00;
+        }
+
+        .qr-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .qr-container img {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+        }
+
+        .confirm-button {
+            display: block;
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s;
+        }
+
+        .confirm-button:hover {
+            background-color: #45a049;
+        }
+
+        /* Modal Style */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #444;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            color: #ffcc00;
+        }
+
+        .modal-content input[type="file"] {
+            margin: 10px 0;
+        }
+
+        .modal-content button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal-content button:hover {
+            background-color: #45a049;
+        }
+
+      /* Spinner Style */
+.spinner {
+    border: 4px solid rgba(255, 204, 0, 0.5); /* Yellow with transparency */
+    border-top: 4px solid #ffcc00; /* Solid yellow color for the top */
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto; /* Center spinner */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Update modal styles to center spinner */
+.modal-content {
+    position: relative; /* Enable positioning of children */
+}
+
+/* Message Style */
+.message {
+    margin-top: 20px;
+    color: #ffcc00;
+    display: none; /* Hidden by default */
+}
+
+/* Fade-in and Fade-out animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+
+/* Tombol close */ .close { position: absolute; top: 10px; right: 15px; font-size: 24px; color: #ffffff; cursor: pointer; } .close:hover { color: #ff5e5e; /* Ubah warna saat hover */ }
+
+/* Styling input file */ .file-input { margin: 20px 0; /* Jarak vertikal */ padding: 10px; /* Padding untuk input */ border: 2px solid #00e676; /* Border hijau */ border-radius: 8px; /* Sudut lebih bulat */ background-color: #232323; /* Latar belakang input */ color: #ffffff; /* Warna teks */ transition: border-color 0.3s ease; /* Animasi border saat fokus */ } .file-input:focus { outline: none; /* Menghilangkan outline default */ border-color: #ff5e5e; /* Ubah border saat fokus */ }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <h1>Struk Pesanan</h1>
+        <div id="orderDetailsContainer">
+            <p>Memuat informasi pesanan...</p>
+        </div>
+
+        <hr>
+<center>
+       <div class="qr-code-container">
+    <img id="qrCode" src="QR.jpg" alt="QR Code for Payment" style="width: 200px; height: 200px;" />
+</div>
+</center>
+
+        <button id="confirmPaymentBtn" class="confirm-button">Konfirmasi Pembayaran</button>
+
+        <div class="receipt-footer">
+            <p>Terima kasih atas pesanan Anda!</p>
+            <center>
+            <p>@RizShop
+
+</p></center>
+        </div>
+    </div>
+
+   <!-- Modal for uploading payment proof -->
+<div id="paymentModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span> <!-- Tombol Close -->
+        <h2>Kirim Bukti Pembayaran</h2>
+       <div class="file-input-container"> <i class="fas fa-upload"></i> <!-- Ikon Upload --> <input type="file" id="paymentProof" accept="image/*" class="file-input"> </div>
+        <br>
+        <button id="sendProofBtn" class="btn">Kirim</button>
+    </div>
+</div>
+
+
+    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
+   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"> </script>
+
+    <script>
+    
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyC5Mtu7P9dzSFG6xUQLteyUWDlFskoHqYs",
+  authDomain: "rizshop-9a8b9.firebaseapp.com",
+  projectId: "rizshop-9a8b9",
+  storageBucket: "rizshop-9a8b9.appspot.com",
+  messagingSenderId: "160498193019",
+  appId: "1:160498193019:web:b87ecd94fa342324b788de",
+  measurementId: "G-P1K9EK6SK7"
+};
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// EmailJS initialization
+emailjs.init("XhucKx6zJenaW0Qh0");
+
+const orderId = new URLSearchParams(window.location.search).get('orderId');
+const modal = document.getElementById('paymentModal');
+const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
+const sendProofBtn = document.getElementById('sendProofBtn');
+
+
+    // Fungsi untuk menampilkan detail pesanan
+    function displayOrderDetails(orderId) {
+        const orderDetailsContainer = document.getElementById('orderDetailsContainer');
+        db.collection('Orders').doc(orderId).get()
+            .then((doc) => {
+                if (doc.exists) {
+                    const orderData = doc.data();
+                    orderDetailsContainer.innerHTML = `
+                        <p><strong>Tujuan Pengguna:</strong> ${orderData.combinedId}</p>
+                        <p><strong>Produk:</strong> ${orderData.productName} - Rp${orderData.productPrice}</p>
+                        <p><strong>Metode Pembayaran:</strong> ${orderData.paymentMethod}</p>
+                        <p><strong>Nomor Telepon:</strong> ${orderData.phoneNumber}</p>
+                        <p><strong>Nama Game:</strong> ${orderData.gameName}</p>
+                        <p><strong>Tanggal Pesanan:</strong> ${new Date(orderData.timestamp.toDate()).toLocaleString()}</p>
+                    `;
+
+                    // Menampilkan harga di bawah QR code
+                    const qrContainer = document.querySelector('.qr-code-container');
+                    qrContainer.innerHTML = `
+                        <img id="qrCode" src="QR.jpg" alt="QR Code for Payment" style="width: 200px; height: 200px;" />
+                        <p style="margin-top: 10px;">Scan dan salin nominal untuk membayar: <strong>Rp${orderData.productPrice}</strong></p>
+                    `;
+
+                } else {
+                    orderDetailsContainer.innerHTML = `<p>Pesanan tidak ditemukan.</p>`;
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching order details: ", error);
+                orderDetailsContainer.innerHTML = `<p>Terjadi kesalahan saat mengambil informasi pesanan.</p>`;
+            });
+    }
+
+    // Menjalankan fungsi untuk menampilkan detail pesanan
+    if (orderId) {
+        displayOrderDetails(orderId);
+    } else {
+        document.getElementById('orderDetailsContainer').innerHTML = `<p>Order ID tidak tersedia.</p>`;
+    }
+
+
+
+
+
+
+
+// Open modal for payment confirmation with fade-in animation
+confirmPaymentBtn.addEventListener('click', () => {
+    modal.style.display = 'flex';
+    modal.classList.remove('fade-out'); // Remove fade-out class if it exists
+    modal.classList.add('fade-in'); // Add fade-in class for the animation
+});
+
+// Send payment proof and order info to Firebase and EmailJS
+sendProofBtn.addEventListener('click', () => {
+    const fileInput = document.getElementById('paymentProof');
+    const file = fileInput.files[0];
+    const spinner = document.createElement('div');
+    spinner.className = 'spinner';
+    const message = document.createElement('p');
+    message.className = 'message';
+
+    if (!file) {
+        alert("Harap unggah bukti pembayaran.");
+        return;
+    }
+
+    // Disable the send button during upload
+    sendProofBtn.disabled = true;
+
+    // Create a storage reference
+    const storageRef = firebase.storage().ref();
+    const fileRef = storageRef.child(`payment_proofs/${orderId}/${file.name}`);
+
+    // Show loading spinner and message
+    modal.querySelector('.modal-content').appendChild(spinner); // Add spinner to modal
+    message.innerText = "Mengirim bukti pembayaran...";
+    modal.querySelector('.modal-content').appendChild(message); // Add message to modal
+    message.style.display = 'block'; // Show message
+    modal.style.pointerEvents = 'none'; // Disable modal interactions
+
+    // Upload the file to Firebase Storage
+    fileRef.put(file).then(() => {
+        // Get the download URL
+        fileRef.getDownloadURL().then((downloadURL) => {
+            // Remove spinner and message
+            spinner.remove();
+            modal.style.pointerEvents = 'auto'; // Re-enable modal interactions
+
+            // Send order information to EmailJS
+            db.collection('Orders').doc(orderId).get().then((doc) => {
+                const orderData = doc.data();
+                const emailParams = {                    
+                    order_id: orderId,
+                    combined_id: orderData.combinedId, // Menambahkan combinedId
+                    product: `${orderData.productName} - Rp${orderData.productPrice}`,
+                    payment_method: orderData.paymentMethod,
+                    phone_number: orderData.phoneNumber,
+                    game_name: orderData.gameName,
+                    order_date: new Date(orderData.timestamp.toDate()).toLocaleString(),
+                    payment_proof_url: downloadURL // Include the URL in the email params
+                };
+
+                // Kirim email melalui EmailJS
+                emailjs.send("service_q3ylw0d", "template_xr8sxkt", emailParams)
+                    .then(() => {
+                        // Update the success message
+                        message.innerText = "Bukti pembayaran dan informasi pesanan berhasil dikirim.";
+                        message.style.display = 'block';
+
+                        // Update Firebase dengan bukti pembayaran URL dan combinedId
+                        db.collection('Orders').doc(orderId).update({
+                            paymentProof: downloadURL, // Simpan URL download
+                            paymentConfirmed: true,
+                            combinedId: orderData.combinedId // Menyimpan combinedId juga
+                        }).then(() => {
+                            console.log("Informasi pesanan diperbarui dengan bukti pembayaran.");
+                        }).catch((error) => {
+                            console.error("Error updating order with payment proof: ", error);
+                        });
+
+                        // Tampilkan modal konfirmasi
+                        showConfirmationModal();
+
+                        // Tunggu 2 detik sebelum mengalihkan ke halaman index
+                        setTimeout(() => {
+                            window.location.href = 'https://ahsan-store-github-io.vercel.app/'; // Redirect to index.html
+                        }, 2000); // Wait 2 seconds before redirecting
+
+                    }, (error) => {
+                        console.error("Error sending email via EmailJS: ", error);
+                        alert("Gagal mengirim informasi pesanan melalui EmailJS.");
+                        sendProofBtn.disabled = false; // Re-enable the button in case of error
+                    });
+            }).catch((error) => {
+                console.error("Error fetching order data: ", error);
+                alert("Terjadi kesalahan saat mengambil data pesanan.");
+                sendProofBtn.disabled = false; // Re-enable the button in case of error
+            });
+        });
+    }).catch((error) => {
+        console.error("Error uploading file: ", error);
+        alert("Gagal mengupload bukti pembayaran.");
+        sendProofBtn.disabled = false; // Re-enable the button in case of error
+    });
+});
+
+// Function to show confirmation modal
+function showConfirmationModal() {
+    const confirmationModal = document.createElement('div');
+    confirmationModal.classList.add('modal');
+    confirmationModal.innerHTML = `
+        <div class="modal-content">
+            <h2>Pemberitahuan</h2>
+            <p>Bukti pembayaran berhasil diupload!</p>
+            <button id="okButton">OK</button>
+        </div>
+    `;
+    document.body.appendChild(confirmationModal);
+
+    // Show the modal with fade-in animation
+    confirmationModal.classList.add('fade-in');
+
+    // Close modal and redirect to index.html when OK is clicked
+    document.getElementById('okButton').addEventListener('click', () => {
+        window.location.href = 'https://ahsan-store-github-io.vercel.app/';
+    });
+
+    // Close modal if clicked outside of modal content
+    confirmationModal.addEventListener('click', (event) => {
+        if (event.target === confirmationModal) {
+            document.body.removeChild(confirmationModal); // Remove modal
+        }
+    });
+}
+
+
+// Event listener untuk refresh halaman
+document.getElementById('closeModal').addEventListener('click', function() {
+    location.reload(); // Refresh halaman
+});
+
+
+    </script>
+</body>
+</html>

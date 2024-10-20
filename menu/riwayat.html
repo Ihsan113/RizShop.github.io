@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat Orderan Client</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1e1e1e;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ffcc00;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border-radius: 5px 0 0 5px;
+            border: 1px solid #ffcc00;
+            width: 300px;
+            background-color: #333;
+            color: #fff;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4CAF50;
+        }
+
+        button {
+            padding: 10px 15px;
+            border-radius: 0 5px 5px 0;
+            border: none;
+            background-color: #4CAF50;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            outline: none;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .table-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ffcc00;
+        }
+
+        th {
+            background-color: #333;
+            color: #ffcc00;
+        }
+
+        td {
+            background-color: #2a2a2a;
+            color: #fff;
+        }
+
+        .no-orders {
+            color: #ffcc00;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #ffcc00;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .search-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            input[type="text"], button {
+                width: 90%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Riwayat Orderan Client</h1>
+
+    <div class="search-container">
+        <input type="text" id="phoneNumber" placeholder="Masukkan nomor telepon...">
+        <button onclick="searchOrders()">Cari</button>
+    </div>
+
+    <div class="table-container">
+        <table id="orderTable">
+            <thead>
+                <tr>
+                    <th>Produk</th>
+                    <th>Nama Game</th> <!-- Tambahan kolom Nama Game -->
+                    <th>Harga</th>
+                    <th>Metode Pembayaran</th>
+                    <th>Tanggal Pesanan</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="orderTableBody">
+                <tr class="loading">
+                    <td colspan="6">Masukkan nomor telepon untuk melihat riwayat orderan.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
+    <script>
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyC5Mtu7P9dzSFG6xUQLteyUWDlFskoHqYs",
+  authDomain: "rizshop-9a8b9.firebaseapp.com",
+  projectId: "rizshop-9a8b9",
+  storageBucket: "rizshop-9a8b9.appspot.com",
+  messagingSenderId: "160498193019",
+  appId: "1:160498193019:web:b87ecd94fa342324b788de",
+  measurementId: "G-P1K9EK6SK7"
+};
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function searchOrders() {
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const orderTableBody = document.getElementById('orderTableBody');
+
+            if (phoneNumber === "") {
+                alert("Masukkan nomor telepon.");
+                return;
+            }
+
+            orderTableBody.innerHTML = `<tr class="loading"><td colspan="6">Memuat riwayat orderan...</td></tr>`;
+
+            db.collection('Orders')
+                .where('phoneNumber', '==', phoneNumber)
+                .get()
+                .then((querySnapshot) => {
+                    orderTableBody.innerHTML = ''; 
+
+                    if (querySnapshot.empty) {
+                        orderTableBody.innerHTML = `<tr class="no-orders"><td colspan="6">Tidak ada orderan dengan nomor telepon ini.</td></tr>`;
+                    } else {
+                        querySnapshot.forEach((doc) => {
+                            const orderData = doc.data();
+                            const orderRow = `
+                                <tr>
+                                    <td>${orderData.productName}</td>
+                                    <td>${orderData.gameName || 'N/A'}</td> <!-- Menampilkan Nama Game -->
+                                    <td>Rp${orderData.productPrice}</td>
+                                    <td>${orderData.paymentMethod}</td>
+                                    <td>${new Date(orderData.timestamp.toDate()).toLocaleString()}</td>
+                                    <td>${orderData.status}</td>
+                                </tr>
+                            `;
+                            orderTableBody.innerHTML += orderRow;
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching orders: ", error);
+                    orderTableBody.innerHTML = `<tr class="no-orders"><td colspan="6">Terjadi kesalahan saat mengambil riwayat orderan.</td></tr>`;
+                });
+        }
+    </script>
+</body>
+</html>

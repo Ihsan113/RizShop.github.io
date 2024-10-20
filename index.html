@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Top-Up Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #1d1d1d);
+            color: white;
+        }
+        /* Header */
+        header {
+            background-color: #1f1f1f;
+            padding: 10px 10px;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h3 {
+        font-size: 23px;
+        margin-bottom: 3px;
+        }
+        
+        header h1 {
+            font-size: 20px;
+            margin: 0;
+            
+        }
+        .hamburger {
+            font-size: 26px;
+            cursor: pointer;
+            color: white;
+        }
+      .search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #333;
+    border-radius: 5px;
+    padding: 5px;
+    max-width: 180px; /* Increased width */
+    
+    margin-left: 20px;
+    position: relative; /* Important for icon positioning */
+}
+
+.search-bar input {
+    border: none;
+    background: none;
+    color: white;
+    padding: 0px 0px 0px 40px; /* Adjust padding for the icon */
+    outline: none;
+    width: 100%;
+    font-size: 14px; /* Modern font size */
+    border-radius: 5px;
+}
+
+.search-bar .fa-search {
+    position: absolute;
+    left: 10px;
+    color: #bbb; /* Subtle color for the icon */
+    font-size: 18px;
+    pointer-events: none; /* Ensures clicking doesn't affect input */
+}
+
+.search-bar button {
+    background-color: #f39c12;
+    border: none;
+    padding: 8px 15px;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.search-bar button:hover {
+    background-color: #e67e22; /* Slightly darker hover effect */
+}
+
+.search-results {
+    position: fixed; /* Tetap di tempat */
+    top: 15%; /* Agak ke atas */
+    left: 50%; /* Di tengah horizontal */
+    transform: translateX(-50%); /* Tetap di tengah */
+    background-color: #333;
+    border-radius: 8px;
+    padding: 15px; /* Tambahkan padding */
+    max-height: 300px; /* Sesuaikan tinggi maksimal */
+    overflow-y: auto;
+    width: 250px; /* Perbesar lebar agar hasil lebih lega */
+    z-index: 10;
+    display: none; /* Sembunyikan secara default */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.result-item {
+    display: flex;
+    align-items: center; /* Gambar dan teks sejajar secara vertikal */
+    padding: 10px 0; /* Tambahkan jarak antar hasil */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Garis bawah untuk memisahkan hasil */
+}
+
+.result-item img {
+    width: 40px; /* Atur ukuran gambar */
+    height: 40px; /* Sesuaikan tinggi gambar */
+    object-fit: cover; /* Potong gambar jika terlalu besar */
+    margin-right: 10px; /* Tambahkan margin kanan agar gambar tidak menempel teks */
+    border-radius: 5px; /* Berikan sedikit sudut melengkung */
+}
+
+.result-item h4 {
+    font-size: 14px;
+    color: white;
+    margin: 0;
+}
+
+.result-item:hover {
+    background-color: #444; /* Berikan efek hover */
+    cursor: pointer;
+}
+
+
+
+
+
+        /* Navbar overlay */
+        .overlay {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.95);
+            overflow-x: hidden;
+            transition: 0.5s;
+            z-index: 1;
+        }
+        .overlay-content {
+            position: relative;
+            top: 20%;
+            width: 100%;
+            text-align: left;
+            padding-left: 20px;
+        }
+        
+        
+
+        .overlay-content a {
+            padding: 10px 0;
+            text-decoration: none;
+            font-size: 20px;
+            margin-top: 5px;
+            color: #f1f1f1;
+            display: block;
+            transition: color 0.3s ease;
+            
+        }
+        .overlay-content a:hover {
+            color: #f39c12;
+        }
+        .overlay-content .daftar-btn {
+            background-color: #f39c12;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            margin-top: 20px;
+            display: inline-block;
+        }
+        .overlay .closebtn {
+            position: absolute;
+            top: 20px;
+            right: 45px;
+            font-size: 40px;
+        }
+        
+        /* Set 50% screen for menu */
+        .overlay-half {
+            width: 0;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(0,0,0,0.95);
+            overflow-x: hidden;
+            transition: 0.3s;
+            z-index: 20;
+        }
+
+        .overlay-half .overlay-content {
+            top: 10%;
+        }
+
+        /* Footer */
+  footer {
+    background-color: #222;
+    color: #fff;
+    padding: 50px 20px;
+    font-family: 'Roboto', sans-serif;
+    border-top: 1px solid #444;
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-logo {
+    text-align: left;
+}
+
+.footer-logo h2 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #f39c12;
+    margin-bottom: 15px;
+}
+
+.footer-logo p {
+    max-width: 400px;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: space-around;
+    gap: 50px;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: #f39c12;
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: white;
+    transform: translateY(-3px);
+}
+
+.footer-social {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.footer-social a {
+    color: #f39c12;
+    margin: 0 15px;
+    font-size: 24px;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-social a:hover {
+    color: white;
+    transform: scale(1.1);
+}
+
+.footer-legal {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin-top: 30px;
+    font-size: 13px;
+    color: #999;
+}
+
+.footer-legal p:hover {
+    color: white;
+}
+
+        
+      .overlay-half .closebtn {
+    position: absolute;
+    top: 20px;
+    left: 10px; /* Adjusted right position */
+    font-size: 40px;
+    color: white;
+    cursor: pointer;
+    text-decoration: none; /* Ensure no underline */
+    padding: 5px; /* Add some padding for better click area */
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.overlay-half .closebtn:hover {
+    color: #f39c12; /* Change color on hover */
+    transform: scale(1.2); /* Enlarge slightly on hover */
+}
+
+/* Game Products Section */
+.product-section {
+    padding: 10px;
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    
+}
+
+.product-card {
+    background-color: #e58439;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 600px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+}
+
+.product-card img {
+    width: 100%;
+    max-width: 400px;
+    height: 110px;
+    object-fit: cover;
+}
+
+.product-card h3 {
+    font-family: 'Roboto', sans-serif; /* Add Roboto font */
+    font-size: 14px;
+    margin: 10px 0;
+    text-align: center;
+    color: white;
+}
+
+
+
+
+.product-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+
+  /* Slider Container */
+        .slider {
+            width: 100vw;            /* Full width of viewport */
+            max-width: 95vw;         /* Maksimum lebar slider relatif terhadap viewport */
+            position: block;              
+            overflow: hidden;
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+
+        .swiper-container {
+            width: 100%;             /* Lebar penuh container */
+            height: 45vw;            /* Tinggi relatif terhadap viewport width */
+            position: relative;
+        }
+
+        .swiper-slide {
+            display: flex;
+            justify-content: center; /* Menyelaraskan konten di tengah horisontal */
+            align-items: center;     /* Menyelaraskan konten di tengah vertikal */
+        }
+
+        .swiper-slide img {
+            width: 100%;             /* Memastikan gambar mengambil 100% lebar slide */
+            height: 100%;            /* Menyesuaikan tinggi gambar dengan container */
+            object-fit: cover;       /* Memastikan gambar menyesuaikan tanpa distorsi */
+            border-radius: 8px;      /* Sudut gambar melengkung */
+        }
+
+        /* Style untuk pagination (titik-titik) */
+        .swiper-pagination {
+            position: absolute;
+            bottom: 10px;            /* Letakkan di bagian bawah gambar */
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+
+        .swiper-pagination-bullet {
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            opacity: 0.5;
+            border-radius: 50%;
+            margin: 0 6px;
+        }
+
+        .swiper-pagination-bullet-active {
+            background: #ff9800;      /* Warna aktif saat slide aktif */
+            opacity: 1;
+        }
+        
+.quick-access {
+    display: flex;
+    gap: 15px;
+    justify-content: center; /* Posisi di tengah */
+    padding: 10px 20px; /* Padding atas-bawah dan kiri-kanan */
+    position: sticky; /* Tetap di posisi biasa sampai di-scroll */
+    top: 0; /* Akan menempel di bagian atas layar setelah di-scroll */
+    background-color: #5a9bd912; /* Tambahkan background agar terlihat jelas */
+    z-index: 5; /* Pastikan elemen tetap di atas elemen lainnya */
+    border-radius: 18px;
+}
+
+.quick-access a {
+    color: #f39c12;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s ease;
+    background-color: #333; /* Warna background untuk card */
+    padding: 10px 20px; /* Padding dalam card */
+    border-radius: 10px; /* Membuat card memiliki sudut bulat */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Menambahkan bayangan */
+    
+}
+
+.quick-access a:hover {
+    color: white;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Bayangan lebih besar saat hover */
+}
+
+a {
+    text-decoration: none; /* Menghilangkan garis bawah */
+    color: inherit; /* Mempertahankan warna teks yang ada */
+}
+
+a:hover {
+    color: #ffcc00; /* Menambahkan warna pada hover, opsional */
+}
+
+  /* Style untuk tombol mengambang */
+        .floating-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+            z-index: 1000;
+        }
+
+        .floating-button:hover {
+            background-color: #e67e22;
+        }
+
+        /* Style untuk menu shortcut */
+        .floating-menu {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 999;
+        }
+
+        .floating-menu a {
+            background-color: #333;
+            color: white;
+            padding: 20px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .floating-menu a:hover {
+            background-color: #444;
+        }
+
+        .floating-menu a i {
+            font-size: 18px;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<header>
+    <span class="hamburger" onclick="openNav()">
+        <i class="fas fa-bars"></i>
+    </span>
+    
+     <h1>RizShop</h1>
+     
+  <div class="search-bar"> <i class="fas fa-search"></i> <input type="text" id="search-input" placeholder="Cari game..." oninput="searchGames()"> <button>Cari</button> <div id="search-results" class="search-results"></div> <!-- Modal hasil pencarian --> </div>
+
+   
+</header>
+<div class="search-results" id="searchResults"></div>
+<center>
+  <!-- Slider Container -->
+    <div class="slider">
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <!-- Slide 1 -->
+                <div class="swiper-slide">
+                    <img src="1.png" alt="Slide 1">
+                </div>
+                <!-- Slide 2 -->
+                <div class="swiper-slide">
+                    <img src="https://assets.motopup.id/2023/09/93ac66606a6335d2bb12e1d5d2bb305c.png" alt="Slide 2">
+                </div>
+                <!-- Slide 3 -->
+                <div class="swiper-slide">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9lVaQWZThxEvQwwhaQBKzZKFmMCJ1zWCrXtDXxnxIMJizK5JUwLTnE3w&s=10" alt="Slide 3">
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+</center>
+
+ <nav class="quick-access">
+        <a href="#populer">Populer</a>
+        <a href="#terlaris">Terlaris</a>
+        <a href="#voucher">Voucher</a>
+    </nav>
+
+
+<!-- Overlay menu (50% screen) -->
+<div id="myNav" class="overlay-half">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div class="overlay-content">
+    <a href="#"><i class="fas fa-home"></i> Beranda</a>
+    <a href="menu/layanan.html"><i class="fas fa-concierge-bell"></i> Layanan</a>
+    <a href="menu/about.html"><i class="fas fa-info-circle"></i> About</a>
+    <a href="menu/contact.html"><i class="fas fa-envelope"></i> Kontak</a>
+</div>
+
+</div>
+
+<main>
+    <section style="min-height: 270px;">
+        
+       <!-- Bagian Populer -->
+<h3 id="populer">&nbspPopuler :</h3>
+
+                
+        <section class="product-section">
+            
+                     
+   <div class="product-card">
+    <a href="https://ahsan-store-github-io.vercel.app/Game/SubGame/mobilelegend.html" target="_blank">
+        <img src="https://static-src.vocagame.com/topupnolimit/Mobile%20legend-09cb-original.webp" alt="Game 1">
+        <h3>Mobile Legend</h3>
+    </a>
+</div>
+
+    <div class="product-card">
+         <a href="https://ahsan-store-github-io.vercel.app/Game/SubGame/FreeFire.html" target="_blank">
+        <img src="https://static-src.vocagame.com/topupnolimit/free_fire-d967-original-ce101-original.webp" alt="Game 2">
+        <h3>Free Fire</h3>
+        </a>
+    </div>
+    
+    <div class="product-card">
+         <a href="https://ahsan-store-github-io.vercel.app/Game/SubGame/PUBG.html" target="_blank">
+        <img src="https://static-src.vocagame.com/topupnolimit/unnamed%20(3)-04102-original.png" alt="Game 3">
+        <h3>Pubg</h3>
+     </a>
+    </div>
+</section>
+</section>
+
+</main>
+
+ <!-- Tombol Mengambang -->
+<button class="floating-button" id="floatingButton">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Menu Shortcut -->
+<div class="floating-menu" id="floatingMenu">
+    <a href="menu/riwayat.html">
+        <i class="fas fa-history"></i> History
+    </a>
+    <a href="https://wa.me/6285357444010" target="_blank">
+        
+        <i class="fab fa-whatsapp"></i> WhatsApp
+    </a>
+  
+    <a href="menu/testimino.html"> <!-- Link to the testimonials page -->
+        <i class="fas fa-star"></i> Testimonials
+    </a>
+</div>
+
+<!-- Keterangan Text -->
+<div class="floating-description" id="floatingDescription">
+    
+</div>
+
+
+
+
+<footer>
+    <div class="footer-container">
+        <div class="footer-logo">
+            <h2>RizShop</h2>
+            <p>RizShop adalah website top up murah, cepat, terpercaya dengan banyak pilihan produk, melayani transaksi 24 jam, dan dengan metode pembayaran terlengkap.</p>
+        </div>
+        <div class="footer-links">
+            <ul>
+                <li><a href="menu/bantuan.html">Bantuan</a></li>
+                
+                <li><a href="menu/legal.html">Legal</a></li>
+            </ul>
+            <ul>
+                <li><a href="menu/syarat.html">Syarat & Ketentuan</a></li>
+                <li><a href="menu/kebijakan.html">Kebijakan Privasi</a></li>
+               
+            </ul>
+        </div>
+        <div class="footer-social">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.instagram.com/rizki_yekan/profilecard/?igsh=Z2JkbjF5OTE1Z29i"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.youtube.com/@SlotokYoe"><i class="fab fa-youtube"></i></a>
+        </div>
+        <div class="footer-legal">
+            <p>&copy; 2024 RizShop Semua hak cipta dilindungi.</p>
+        </div>
+    </div>
+</footer>
+
+
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+<script>
+    function openNav() {
+        document.getElementById("myNav").style.width = "45%";
+    }
+
+    function closeNav() {
+        document.getElementById("myNav").style.width = "0";
+    }
+    
+    <!-- slider -->
+     var swiper = new Swiper('.swiper-container', {
+            slidesPerView: 1,           // Menampilkan 1 slide setiap kali
+            spaceBetween: 10,           // Jarak antar slide
+            loop: true,                 // Slider akan melingkar (loop)
+            pagination: {
+                el: '.swiper-pagination',  // Mengaktifkan pagination titik-titik
+                clickable: true,           // Membuat pagination dapat diklik
+            },
+            autoplay: {
+                delay: 3000,                // Auto-slide setiap 3 detik
+                disableOnInteraction: false  // Lanjutkan autoplay setelah interaksi
+            },
+            effect: 'slide',                // Efek transisi
+            speed: 800                      // Kecepatan transisi 800ms
+        });
+    <!-- slider -->
+    
+    
+    <!-- search -->
+    const products = [
+        { name: "Mobile Legend", link: "Game/SubGame/mobilelegend.html", image: "https://static-src.vocagame.com/topupnolimit/Mobile%20legend-09cb-original.webp" },
+        { name: "Free Fire", link: "Game/SubGame/FreeFire.html", image: "https://static-src.vocagame.com/topupnolimit/free_fire-d967-original-ce101-original.webp" },
+        { name: "Pubg", link: "Game/SubGame/PUBG.html", image: "https://static-src.vocagame.com/topupnolimit/unnamed%20(3)-04102-original.png" },
+        // Tambahkan lebih banyak produk di sini
+    ];
+function searchGames() {
+        const input = document.getElementById('search-input').value.toLowerCase();
+        const resultsContainer = document.getElementById('search-results');
+        resultsContainer.innerHTML = '';
+
+        if (input) {
+            const results = products.filter(product => product.name.toLowerCase().includes(input));
+
+            results.forEach(product => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                resultItem.innerHTML = `<img src="${product.image}" alt="${product.name}"><h4>${product.name}</h4>`;
+                resultItem.onclick = () => window.location.href = product.link; // Arahkan ke link produk
+                resultsContainer.appendChild(resultItem);
+            });
+
+            resultsContainer.style.display = results.length ? 'block' : 'none'; // Tampilkan atau sembunyikan hasil
+        } else {
+            resultsContainer.style.display = 'none'; // Sembunyikan jika input kosong
+        }
+    }
+<!-- search -->
+
+
+<!-- sorcut -->
+const floatingButton = document.getElementById('floatingButton');
+        const floatingMenu = document.getElementById('floatingMenu');
+
+        floatingButton.addEventListener('click', function() {
+            if (floatingMenu.style.display === 'none' || floatingMenu.style.display === '') {
+                floatingMenu.style.display = 'flex';
+            } else {
+                floatingMenu.style.display = 'none';
+            }
+        });
+
+        // Optional: Menyembunyikan menu jika diklik di luar tombol/menu
+        window.addEventListener('click', function(e) {
+            if (!floatingButton.contains(e.target) && !floatingMenu.contains(e.target)) {
+                floatingMenu.style.display = 'none';
+            }
+        });
+        <!-- sorcut -->
+</script>
+
+</body>
+</html>

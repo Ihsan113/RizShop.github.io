@@ -8,18 +8,17 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #2c2c2c;
-            color: #f5f5f5;
+            background-color: #ffffff; /* Changed to white for better printing */
+            color: #000000; /* Black text for better contrast */
             margin: 0;
             padding: 20px;
             text-align: center;
         }
 
         h1 {
-            color: #ffcc00;
-            font-size: 36px;
+            font-size: 28px;
             margin-bottom: 20px;
-            text-shadow: 2px 2px 4px #000;
+            text-shadow: none; /* Removed shadow for print */
         }
 
         .form-container {
@@ -29,17 +28,17 @@
         input[type="text"] {
             padding: 12px;
             border-radius: 5px;
-            border: 2px solid #ffcc00;
+            border: 2px solid #000000; /* Black border */
             width: 320px;
-            background-color: #444;
-            color: #fff;
+            background-color: #f0f0f0; /* Light gray background */
+            color: #000;
             outline: none;
             font-size: 16px;
             transition: border-color 0.3s;
         }
 
         input[type="text"]:focus {
-            border-color: #ffdd33;
+            border-color: #444444; /* Darker border on focus */
         }
 
         button {
@@ -57,10 +56,13 @@
             background-color: #45a049;
             transform: scale(1.05);
         }
+
+        canvas {
+            display: none; /* Hide the canvas element */
+        }
     </style>
     <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
@@ -71,8 +73,10 @@
         <button onclick="generateReceipt()">Cetak Struk</button>
     </div>
 
+    <canvas id="receiptCanvas" width="600" height="900"></canvas> <!-- Increased size for HD -->
+
     <script>
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+         // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyC5Mtu7P9dzSFG6xUQLteyUWDlFskoHqYs",
   authDomain: "rizshop-9a8b9.firebaseapp.com",
@@ -107,8 +111,8 @@ const firebaseConfig = {
                     text: 'Struk berhasil dihasilkan!',
                     confirmButtonColor: '#4CAF50'
                 });
-                // Tampilkan struk dalam PDF
-                downloadReceipt(orderData);
+                // Tampilkan struk dalam PNG
+                drawReceipt(orderData);
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -119,45 +123,57 @@ const firebaseConfig = {
             }
         }
 
-        function downloadReceipt(orderData) {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({ unit: "mm", format: "a5", orientation: "portrait" });
+        function drawReceipt(orderData) {
+            const canvas = document.getElementById('receiptCanvas');
+            const ctx = canvas.getContext('2d');
 
-            // Tambahkan logo
-            const img = new Image();
-            img.src = "https://iili.io/23uxXXp.jpg";
-            img.onload = function () {
-                pdf.addImage(img, 'JPEG', 10, 10, 40, 15); // Menambahkan logo ke PDF
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                pdf.setFontSize(16);
-                pdf.text("AhsanStore", 70, 20);
-                pdf.setFontSize(12);
-                pdf.text("Orderan Berhasil", 70, 30);
+            // Set background color
+            ctx.fillStyle = "#ffffff"; // White background
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                pdf.setDrawColor(255, 204, 0);
-                pdf.setLineWidth(1);
-                pdf.line(10, 35, 200, 35); // Garis pembatas
+            // Draw receipt elements
+            ctx.fillStyle = "#000000"; // Black text color
+            ctx.font = "24px Poppins"; // Larger font for HD
+            ctx.fillText("RizShop", 50, 40); // Centered logo title
+            ctx.font = "20px Poppins"; 
+            ctx.fillText("Orderan Berhasil", 50, 70);
+            ctx.fillStyle = "#000000"; // Black color for lines
+            ctx.fillRect(20, 90, 560, 2); // Top separator line
 
-                // Data Pesanan
-                pdf.setFontSize(10);
-                pdf.text(`Order ID: ${orderData.combinedId}`, 10, 45);
-                pdf.text(`Produk: ${orderData.productName}`, 10, 55);
-                pdf.text(`Nama Game: ${orderData.gameName || 'N/A'}`, 10, 65);
-                pdf.text(`Metode Pembayaran: ${orderData.paymentMethod}`, 10, 75);
-                pdf.text(`Nomor Telepon: ${orderData.phoneNumber}`, 10, 85);
-                pdf.text(`Status: ${orderData.status}`, 10, 95);
-                pdf.text(`Tanggal Pesanan: ${new Date(orderData.timestamp.toDate()).toLocaleString()}`, 10, 105);
+            ctx.fillStyle = "#000000"; // Black text color
+            ctx.font = "16px Poppins"; // Consistent font size
+            ctx.fillText(`Order ID: ${orderData.combinedId}`, 50, 120);
+            ctx.fillText(`Produk: ${orderData.productName}`, 50, 150);
+            ctx.fillText(`Nama Game: ${orderData.gameName || 'N/A'}`, 50, 180);
+            ctx.fillText(`Metode Pembayaran: ${orderData.paymentMethod}`, 50, 210);
+            ctx.fillText(`Nomor Telepon: ${orderData.phoneNumber}`, 50, 240);
+            ctx.fillText(`Status: ${orderData.status}`, 50, 270);
+            ctx.fillText(`Tanggal Pesanan: ${new Date(orderData.timestamp.toDate()).toLocaleString()}`, 50, 300);
+            
+            ctx.fillRect(20, 330, 560, 2); // Bottom separator line
 
-                pdf.setDrawColor(255, 204, 0);
-                pdf.setLineWidth(1);
-                pdf.line(10, 110, 200, 110); // Garis pembatas bawah
+            ctx.fillText("Terima Kasih Telah Berbelanja!", 50, 360);
 
-                pdf.setFontSize(12);
-                pdf.text("Terima Kasih Telah Berbelanja!", 70, 120);
-
-                // Unduh PDF
-                pdf.save("struk_order_ahsanstore.pdf");
-            };
+            // Show success alert with download button
+            Swal.fire({
+                icon: 'success',
+                title: 'Sukses',
+                text: 'Struk berhasil dihasilkan!',
+                showCancelButton: true,
+                confirmButtonColor: '#4CAF50',
+                cancelButtonText: 'Tutup',
+                confirmButtonText: 'Unduh Struk',
+                preConfirm: () => {
+                    // Download the canvas as PNG
+                    const link = document.createElement('a');
+                    link.download = 'struk_order_RizShop.png';
+                    link.href = canvas.toDataURL('image/png', 1.0); // High-quality PNG
+                    link.click();
+                }
+            });
         }
     </script>
 </body>

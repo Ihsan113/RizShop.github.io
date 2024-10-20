@@ -227,7 +227,7 @@ const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 // EmailJS initialization
-emailjs.init("XhucKx6zJenaW0Qh0");
+emailjs.init("sB2opswDHYXqRJdrH");
 
 const orderId = new URLSearchParams(window.location.search).get('orderId');
 const modal = document.getElementById('paymentModal');
@@ -339,7 +339,7 @@ sendProofBtn.addEventListener('click', () => {
                 };
 
                 // Kirim email melalui EmailJS
-                emailjs.send("service_q3ylw0d", "template_xr8sxkt", emailParams)
+                emailjs.send("service_c8luzfc", "template_4ai9j8l", emailParams)
                     .then(() => {
                         // Update the success message
                         message.innerText = "Bukti pembayaran dan informasi pesanan berhasil dikirim.";
@@ -361,7 +361,7 @@ sendProofBtn.addEventListener('click', () => {
 
                         // Tunggu 2 detik sebelum mengalihkan ke halaman index
                         setTimeout(() => {
-                            window.location.href = 'https://ahsan-store-github-io.vercel.app/'; // Redirect to index.html
+                            window.location.href = 'https://rizshopcom.vercel.app/'; // Redirect to index.html
                         }, 2000); // Wait 2 seconds before redirecting
 
                     }, (error) => {
@@ -400,7 +400,7 @@ function showConfirmationModal() {
 
     // Close modal and redirect to index.html when OK is clicked
     document.getElementById('okButton').addEventListener('click', () => {
-        window.location.href = 'https://ahsan-store-github-io.vercel.app/';
+        window.location.href = 'https://rizshopcom.vercel.app/';
     });
 
     // Close modal if clicked outside of modal content
